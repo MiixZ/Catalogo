@@ -1,7 +1,7 @@
-package htt.catalogo.models
+package htt.catalogo
 
 data class Product(
     val id : Long,
-    val name : String,
+    val  name : String,
     val price : Double
 )
