@@ -2,44 +2,32 @@ package htt.catalogo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import htt.catalogo.adaptadores.ProductAdapter
 import htt.catalogo.ui.theme.CatalogoTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CatalogoTheme {
-                var message by remember { mutableStateOf("Cargando...") }
-                val repository = ApiRepo()
-                LaunchedEffect(Unit) {
-                    try {
-                        val response = repository.getAllProducts()
-                        message = response.joinToString("\n") { product ->
-                            "${product.id} - ${product.name} - ${product.price}"
-                        }
-                    } catch (e: Exception) {
-                        message = "Error al cargar: ${e.message}"
-                    }
-                }
+        setContentView(R.layout.activity_main)
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        message = message,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val repository = ApiRepo()
+        lifecycleScope.launch {
+            try {
+                val products = repository.getAllProducts() // Lista de productos desde la API
+                recyclerView.adapter = ProductAdapter(products)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
