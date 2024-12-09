@@ -1,5 +1,6 @@
-package htt.catalogo
+package htt.catalogo.api
 
+import htt.catalogo.model.Product
 import retrofit2.http.GET
 
 interface ApiService {

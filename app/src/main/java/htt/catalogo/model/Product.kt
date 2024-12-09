@@ -1,4 +1,4 @@
-package htt.catalogo
+package htt.catalogo.model
 
 data class Product(
     val id : Long,
