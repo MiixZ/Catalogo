@@ -13,8 +13,6 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,7 +23,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Reemplazar el contenedor con el ProductListFragment
         childFragmentManager.beginTransaction()
             .replace(R.id.home_fragment_container, ProductListFragment())
             .commit()

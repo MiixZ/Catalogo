@@ -28,7 +28,6 @@ class ProductListFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Configura un adaptador vacío inicialmente
         val adapter = ProductAdapter(emptyList())
         recyclerView.adapter = adapter
 
@@ -37,7 +36,6 @@ class ProductListFragment : Fragment() {
             try {
                 val products = repository.getAllProducts()
                 withContext(Dispatchers.Main) {
-                    // Actualiza el adaptador con los datos obtenidos
                     adapter.updateProducts(products)
                 }
             } catch (e: Exception) {

@@ -1,8 +1,6 @@
-package htt.catalogo.ui
+package htt.catalogo.ui.home
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,12 +20,6 @@ class ProductListActivity : ComponentActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        val buttonMap: Button = findViewById(R.id.button_map)
-        buttonMap.setOnClickListener {
-            //val intent = Intent(this, MapActivity::class.java)
-           // startActivity(intent)
-        }
 
         val repository = ApiRepo()
         CoroutineScope(Dispatchers.IO).launch {
