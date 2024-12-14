@@ -28,6 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.home.ProductListActivity" />
+        <activity android:name=".ui.map.MapActivity" />
+
     </application>
 
 </manifest>
