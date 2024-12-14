@@ -1,11 +1,13 @@
 package htt.catalogo
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import htt.catalogo.databinding.ActivityMainBinding
+import htt.catalogo.logininstance.LoginInstance
+import htt.catalogo.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.fabHome.hide()
             }
         }
+
+        updateHeader()
 
         binding.appBarMain.fab.setOnClickListener { view ->
             navController.navigate(R.id.nav_cart)
@@ -106,4 +112,56 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_login -> {
+
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.action_logout -> {
+                LoginInstance.currentUser = null
+                updateHeader()
+                invalidateOptionsMenu()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateHeader()
+    }
+
+    private fun updateHeader() {
+        val headerView = binding.navView.getHeaderView(0)
+        val name: TextView = headerView.findViewById(R.id.name)
+        val mail: TextView = headerView.findViewById(R.id.mail)
+
+        name.text = LoginInstance.currentUser?.name ?: "Usuario no disponible"
+        mail.text = LoginInstance.currentUser?.email ?: "Email no disponible"
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+
+        val loginItem = menu.findItem(R.id.action_login)
+        val logoutItem = menu.findItem(R.id.action_logout)
+
+        if (LoginInstance.currentUser == null) {
+            loginItem.isVisible = true
+            logoutItem.isVisible = false
+        } else {
+            loginItem.isVisible = false
+            logoutItem.isVisible = true
+        }
+
+        return true
+    }
+
+
+
 }

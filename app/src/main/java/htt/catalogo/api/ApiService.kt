@@ -1,6 +1,8 @@
 package htt.catalogo.api
 
 import htt.catalogo.model.Product
+import htt.catalogo.model.User
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -16,4 +18,7 @@ interface ApiService {
 
     @GET("cart/removeProductFromCart")
     suspend fun removeProductFromCart(@Query("email") email: String, @Query("productId") id: String)
+
+    @GET("user/login")
+    suspend fun login(@Query("email") email: String, @Query("password") password: String): User
 }

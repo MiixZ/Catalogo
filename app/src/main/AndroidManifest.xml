@@ -34,6 +34,7 @@
         </activity>
         <activity android:name=".ui.home.ProductListActivity" />
         <activity android:name=".ui.map.MapActivity" />
+        <activity android:name=".ui.login.LoginActivity" />
 
     </application>
 
