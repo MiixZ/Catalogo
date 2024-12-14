@@ -59,7 +59,7 @@ class ProductListFragment : Fragment() {
                     e.printStackTrace()
                 }
             }
-        })
+        }, showTotal = false)
 
         recyclerView.adapter = adapter
 
