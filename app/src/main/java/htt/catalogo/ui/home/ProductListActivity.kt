@@ -27,11 +27,13 @@ class ProductListActivity : ComponentActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val products = repository.getAllProducts()
+                val cartProducts = repository.getCartProducts()
                 withContext(Dispatchers.Main) {
-                    val adapter = ProductAdapter(products) { product ->
-                        // Aquí se maneja el clic en el ícono del carrito
+                    val adapter = ProductAdapter(products, cartProducts, { product ->
                         addToCart(product)
-                    }
+                    }, { product ->
+                        removeFromCart(product)
+                    })
                     recyclerView.adapter = adapter
                 }
             } catch (e: Exception) {
@@ -40,13 +42,11 @@ class ProductListActivity : ComponentActivity() {
         }
     }
 
-    // Función que se llama cuando se hace clic en el ícono del carrito
     private fun addToCart(product: Product) {
-        // Aquí puedes agregar el código para agregar el producto al carrito
         Toast.makeText(this, "${product.name} agregado al carrito", Toast.LENGTH_SHORT).show()
+    }
 
-        // Lógica para agregar al carrito, por ejemplo:
-        // - Guardar en una lista global del carrito
-        // - Navegar a una pantalla de carrito
+    private fun removeFromCart(product: Product) {
+        Toast.makeText(this, "${product.name} eliminado del carrito", Toast.LENGTH_SHORT).show()
     }
 }

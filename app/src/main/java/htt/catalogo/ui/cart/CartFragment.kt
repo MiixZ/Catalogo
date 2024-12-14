@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CartFragment: Fragment() {
+    private lateinit var adapter: ProductAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,8 +30,22 @@ class CartFragment: Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = ProductAdapter(emptyList(), { product ->
+        adapter = ProductAdapter(emptyList(), emptyList(), { product ->
 
+        }, { product ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    repository.removeProductFromCart(product.id.toString())
+                    val cartProducts = repository.getCartProducts()
+                    withContext(Dispatchers.Main) {
+                        adapter.updateProducts(adapter.products, cartProducts)
+                        Toast.makeText(requireContext(), "${product.name} eliminado del carrito", Toast.LENGTH_SHORT).show()
+                        requireActivity().recreate()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         })
 
         recyclerView.adapter = adapter
@@ -38,7 +54,13 @@ class CartFragment: Fragment() {
             try {
                 val products = repository.getCartProducts()
                 withContext(Dispatchers.Main) {
-                    adapter.updateProducts(products)
+                    adapter.updateProducts(products, products)
+                }
+
+                if (products.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "No hay productos en el carrito", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -18,6 +18,8 @@ import kotlinx.coroutines.withContext
 
 class ProductListFragment : Fragment() {
 
+    private lateinit var adapter: ProductAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,12 +31,29 @@ class ProductListFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = ProductAdapter(emptyList(), { product ->
+        adapter = ProductAdapter(emptyList(), emptyList(), { product ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     repository.addProductToCart("admin@gmail.com", product.id.toString())
+                    val cartProducts = repository.getCartProducts()
                     withContext(Dispatchers.Main) {
+                        adapter.updateProducts(adapter.products, cartProducts)
                         Toast.makeText(requireContext(), "${product.name} agregado al carrito", Toast.LENGTH_SHORT).show()
+                        requireActivity().recreate()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }, { product ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    repository.removeProductFromCart(product.id.toString())
+                    val cartProducts = repository.getCartProducts()
+                    withContext(Dispatchers.Main) {
+                        adapter.updateProducts(adapter.products, cartProducts)
+                        Toast.makeText(requireContext(), "${product.name} eliminado del carrito", Toast.LENGTH_SHORT).show()
+                        requireActivity().recreate()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -47,8 +66,9 @@ class ProductListFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val products = repository.getAllProducts()
+                val cartProducts = repository.getCartProducts()
                 withContext(Dispatchers.Main) {
-                    adapter.updateProducts(products)
+                    adapter.updateProducts(products, cartProducts)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

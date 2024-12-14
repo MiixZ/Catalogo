@@ -2,7 +2,6 @@ package htt.catalogo.api
 
 import htt.catalogo.model.Product
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -16,5 +15,5 @@ interface ApiService {
     suspend fun getCartProducts(@Query("email") email: String): List<Product>
 
     @GET("cart/removeProductFromCart")
-    suspend fun removeProductFromCart(id: String): List<Product>
+    suspend fun removeProductFromCart(@Query("email") email: String, @Query("productId") id: String)
 }

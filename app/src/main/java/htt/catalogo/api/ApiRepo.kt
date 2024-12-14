@@ -9,5 +9,5 @@ class ApiRepo {
 
     suspend fun getCartProducts() = apiService.getCartProducts("admin@gmail.com")
 
-    suspend fun removeProductFromCart(id: String) = apiService.removeProductFromCart(id)
+    suspend fun removeProductFromCart(id: String) = apiService.removeProductFromCart("admin@gmail.com", id)
 }

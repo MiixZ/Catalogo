@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CartActivity: ComponentActivity() {
+class CartActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart_main)
@@ -25,9 +25,11 @@ class CartActivity: ComponentActivity() {
             try {
                 val products = repository.getCartProducts()
                 withContext(Dispatchers.Main) {
-                    val adapter = ProductAdapter(products) { product ->
-                        // Aquí se maneja el clic en el ícono del carrito
-                    }
+                    val adapter = ProductAdapter(products, products, { product ->
+                        // Handle add to cart click
+                    }, { product ->
+                        // Handle delete from cart click
+                    })
                     recyclerView.adapter = adapter
                 }
             } catch (e: Exception) {
