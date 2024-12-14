@@ -13,7 +13,8 @@ class ProductAdapter(
     var products: List<Product>,
     private var cartProducts: List<Product>,
     private val onAddToCartClick: (Product) -> Unit,
-    private val onDeleteFromCartClick: (Product) -> Unit
+    private val onDeleteFromCartClick: (Product) -> Unit,
+    private val showTotal: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -44,7 +45,7 @@ class ProductAdapter(
         }
     }
 
-    override fun getItemCount(): Int = products.size + 1
+    override fun getItemCount(): Int = if (showTotal) products.size + 1 else products.size
 
     fun updateProducts(newProducts: List<Product>, newCartProducts: List<Product>) {
         products = newProducts
