@@ -23,7 +23,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
     private val LOCATION_PERMISSION_REQUEST = 100
-    val defaultLocation = LatLng(37.1773, -3.5986)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,7 +66,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val currentLocation = LatLng(location.latitude, location.longitude)
-                googleMap.addMarker(MarkerOptions().position(currentLocation).title("Mi ubicación"))
+                stablishStores()
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
             } else {
                 Toast.makeText(requireContext(), "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT).show()
@@ -92,5 +91,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 Toast.makeText(requireContext(), "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun stablishStores() {
+        googleMap.addMarker(MarkerOptions().position(LatLng(37.4216919, -122.0890471)).title("Almacen 1"))
+        googleMap.addMarker(MarkerOptions().position(LatLng(37.4113359, -122.0753378)).title("Almacen 2"))
+        googleMap.addMarker(MarkerOptions().position(LatLng(37.4040681, -122.1100553)).title("Almacen 3"))
     }
 }
