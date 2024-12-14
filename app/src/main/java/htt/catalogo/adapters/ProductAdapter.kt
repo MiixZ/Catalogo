@@ -1,5 +1,6 @@
 package htt.catalogo.adapters
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,12 +57,16 @@ class ProductAdapter(
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val productName: TextView = itemView.findViewById(R.id.product_name)
         private val productPrice: TextView = itemView.findViewById(R.id.product_price)
+        private val productImage: ImageView = itemView.findViewById(R.id.product_image)
         private val addToCartIcon: ImageView = itemView.findViewById(R.id.product_icon)
         private val deleteFromCartIcon: ImageView = itemView.findViewById(R.id.delete_product_icon)
 
         fun bind(product: Product, isInCart: Boolean) {
             productName.text = product.name
             productPrice.text = product.price.toString()
+            val imageBytes = product.getImageBytes()
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            productImage.setImageBitmap(bitmap)
 
             if (isInCart) {
                 addToCartIcon.visibility = View.GONE
