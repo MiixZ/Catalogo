@@ -1,5 +1,7 @@
 package htt.catalogo.api
 
+import htt.catalogo.model.Product
+
 class ApiRepo {
     private val apiService = ApiClient.retrofit.create(ApiService::class.java)
 
@@ -12,4 +14,6 @@ class ApiRepo {
     suspend fun removeProductFromCart(id: String) = apiService.removeProductFromCart("admin@gmail.com", id)
 
     suspend fun login(email: String, password: String) = apiService.login(email, password)
+
+    suspend fun addProduct(product: Product) = apiService.addProduct(product)
 }

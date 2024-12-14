@@ -8,25 +8,25 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import com.google.android.material.navigation.NavigationView
 import htt.catalogo.databinding.ActivityMainBinding
 import htt.catalogo.logininstance.LoginInstance
+import htt.catalogo.ui.form.FormActivity
 import htt.catalogo.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
     private val LOCATION_PERMISSION_REQUEST = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,34 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        // Configurar NavController
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.nav_home, R.id.nav_gallery, R.id.map, R.id.nav_cart, R.id.add_product),
+            drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+
+        // Listener para manejar la navegación manual de "Agregar producto"
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> navController.navigate(R.id.nav_home)
+                R.id.nav_gallery -> navController.navigate(R.id.nav_gallery)
+                R.id.map -> navController.navigate(R.id.map)
+                R.id.nav_cart -> navController.navigate(R.id.nav_cart)
+                R.id.add_product -> {
+                    val intent = Intent(this, FormActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+            drawerLayout.closeDrawers()
+            true
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.nav_cart) {
                 binding.appBarMain.fab.hide()
@@ -52,24 +79,12 @@ class MainActivity : AppCompatActivity() {
 
         updateHeader()
 
-        binding.appBarMain.fab.setOnClickListener { view ->
+        binding.appBarMain.fab.setOnClickListener {
             navController.navigate(R.id.nav_cart)
         }
-
-        binding.appBarMain.fabHome.setOnClickListener { view ->
+        binding.appBarMain.fabHome.setOnClickListener {
             navController.navigate(R.id.nav_home)
         }
-
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.map
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,30 +98,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST
             )
         }
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permiso de ubicación concedido", Toast.LENGTH_SHORT).show()
             } else {
-
                 Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
             }
         }
@@ -115,7 +123,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_login -> {
-
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 return true
@@ -157,10 +164,6 @@ class MainActivity : AppCompatActivity() {
             loginItem.isVisible = false
             logoutItem.isVisible = true
         }
-
         return true
     }
-
-
-
 }

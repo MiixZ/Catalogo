@@ -3,7 +3,9 @@ package htt.catalogo.api
 import htt.catalogo.model.Product
 import htt.catalogo.model.User
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -21,4 +23,7 @@ interface ApiService {
 
     @GET("user/login")
     suspend fun login(@Query("email") email: String, @Query("password") password: String): User
+
+    @POST("product/createProduct")
+    suspend fun addProduct(@Body product: Product): Product
 }
