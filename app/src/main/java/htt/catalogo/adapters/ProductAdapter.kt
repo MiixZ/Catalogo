@@ -1,6 +1,5 @@
 package htt.catalogo.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +14,37 @@ class ProductAdapter(
     private var cartProducts: List<Product>,
     private val onAddToCartClick: (Product) -> Unit,
     private val onDeleteFromCartClick: (Product) -> Unit
-) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
-        return ProductViewHolder(view)
+    companion object {
+        private const val VIEW_TYPE_PRODUCT = 0
+        private const val VIEW_TYPE_TOTAL = 1
     }
 
-    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        val product = products[position]
-        holder.bind(product, cartProducts.contains(product))
+    override fun getItemViewType(position: Int): Int {
+        return if (position < products.size) VIEW_TYPE_PRODUCT else VIEW_TYPE_TOTAL
     }
 
-    override fun getItemCount(): Int = products.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_PRODUCT) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
+            ProductViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_total, parent, false)
+            TotalViewHolder(view)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ProductViewHolder) {
+            val product = products[position]
+            holder.bind(product, cartProducts.contains(product))
+        } else if (holder is TotalViewHolder) {
+            holder.bind(cartProducts.sumOf { it.price })
+        }
+    }
+
+    override fun getItemCount(): Int = products.size + 1
 
     fun updateProducts(newProducts: List<Product>, newCartProducts: List<Product>) {
         products = newProducts
@@ -41,7 +58,6 @@ class ProductAdapter(
         private val addToCartIcon: ImageView = itemView.findViewById(R.id.product_icon)
         private val deleteFromCartIcon: ImageView = itemView.findViewById(R.id.delete_product_icon)
 
-        @SuppressLint("SetTextI18n")
         fun bind(product: Product, isInCart: Boolean) {
             productName.text = product.name
             productPrice.text = product.price.toString()
@@ -55,6 +71,14 @@ class ProductAdapter(
                 deleteFromCartIcon.visibility = View.GONE
                 addToCartIcon.setOnClickListener { onAddToCartClick(product) }
             }
+        }
+    }
+
+    inner class TotalViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val totalPrice: TextView = itemView.findViewById(R.id.total_price)
+
+        fun bind(total: Double) {
+            totalPrice.text = "Total: $total"
         }
     }
 }

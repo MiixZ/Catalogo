@@ -26,9 +26,9 @@ class CartActivity : ComponentActivity() {
                 val products = repository.getCartProducts()
                 withContext(Dispatchers.Main) {
                     val adapter = ProductAdapter(products, products, { product ->
-                        // Handle add to cart click
+
                     }, { product ->
-                        // Handle delete from cart click
+
                     })
                     recyclerView.adapter = adapter
                 }
