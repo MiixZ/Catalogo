@@ -41,11 +41,11 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/product_icon"
+            android:id="@+id/delete_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/add_to_chart"
-            android:contentDescription="Ícono de carrito"
+            android:src="@drawable/eliminar"
+            android:contentDescription="Ícono de eliminar"
             app:tint="@color/black"
             android:layout_gravity="center_vertical" />
     </LinearLayout>

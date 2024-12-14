@@ -22,4 +22,10 @@
         android:name="htt.catalogo.ui.map.MapFragment"
         android:label="@string/map"
         tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="htt.catalogo.ui.cart.CartFragment"
+        android:label="@string/cart"
+        tools:layout="@layout/fragment_cart" />
 </navigation>
