@@ -33,7 +33,9 @@ class ProductListFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     repository.addProductToCart("admin@gmail.com", product.id.toString())
-                    Toast.makeText(requireContext(), "${product.name} agregado al carrito", Toast.LENGTH_SHORT).show()
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "${product.name} agregado al carrito", Toast.LENGTH_SHORT).show()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
