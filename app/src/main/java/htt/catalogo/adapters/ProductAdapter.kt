@@ -22,7 +22,8 @@ class ProductAdapter(
     private val onAddToCartClick: (Product) -> Unit,
     private val onDeleteFromCartClick: (Product) -> Unit,
     private val showTotal: Boolean = true,
-    private val showCartButtons: Boolean = true
+    public var showCartButtons: Boolean = true,
+    public var onChart: Boolean = false
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -80,10 +81,13 @@ class ProductAdapter(
                 if (isInCart) {
                     addToCartIcon.visibility = View.GONE
                     deleteFromCartIcon.visibility = View.VISIBLE
+                    if (LoginInstance.currentUser?.role == "ADMIN" && !onChart) trashProductIcon.visibility = View.VISIBLE
+                    else trashProductIcon.visibility = View.GONE
                     deleteFromCartIcon.setOnClickListener { onDeleteFromCartClick(product) }
                 } else {
                     addToCartIcon.visibility = View.VISIBLE
                     deleteFromCartIcon.visibility = View.GONE
+                    if (LoginInstance.currentUser?.role == "ADMIN" && !onChart) trashProductIcon.visibility = View.VISIBLE
                     addToCartIcon.setOnClickListener { onAddToCartClick(product) }
                 }
             } else {

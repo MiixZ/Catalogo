@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import htt.catalogo.R
 import htt.catalogo.adapters.ProductAdapter
 import htt.catalogo.api.ApiRepo
+import htt.catalogo.logininstance.LoginInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,7 +49,7 @@ class CartFragment: Fragment() {
                     e.printStackTrace()
                 }
             }
-        })
+        }, onChart = true )
 
         recyclerView.adapter = adapter
 
@@ -75,5 +76,13 @@ class CartFragment: Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        adapter.showCartButtons = LoginInstance.currentUser != null
+        adapter.onChart = true
+        adapter.notifyDataSetChanged()
     }
 }

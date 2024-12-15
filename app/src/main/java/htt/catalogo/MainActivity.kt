@@ -130,6 +130,8 @@ class MainActivity : AppCompatActivity() {
                 LoginInstance.currentUser = null
                 updateHeader()
                 invalidateOptionsMenu()
+                recreate()
+
                 return true
             }
         }

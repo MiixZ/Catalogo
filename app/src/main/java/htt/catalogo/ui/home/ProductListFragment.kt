@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import htt.catalogo.R
 import htt.catalogo.adapters.ProductAdapter
 import htt.catalogo.api.ApiRepo
+import htt.catalogo.logininstance.LoginInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,6 +82,8 @@ class ProductListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        adapter.notifyDataSetChanged()
 
+        adapter.showCartButtons = LoginInstance.currentUser != null
     }
 }
