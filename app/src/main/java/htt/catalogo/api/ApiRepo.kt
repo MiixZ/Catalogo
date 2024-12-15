@@ -1,5 +1,6 @@
 package htt.catalogo.api
 
+import htt.catalogo.logininstance.LoginInstance
 import htt.catalogo.model.Product
 
 class ApiRepo {
@@ -9,9 +10,9 @@ class ApiRepo {
 
     suspend fun addProductToCart(email: String, id: String) = apiService.addProductToCart(email, id)
 
-    suspend fun getCartProducts() = apiService.getCartProducts("admin@gmail.com")
+    suspend fun getCartProducts() = apiService.getCartProducts(LoginInstance.currentUser?.email ?: "")
 
-    suspend fun removeProductFromCart(id: String) = apiService.removeProductFromCart("admin@gmail.com", id)
+    suspend fun removeProductFromCart(id: String) = apiService.removeProductFromCart(LoginInstance.currentUser?.email ?: "", id)
 
     suspend fun login(email: String, password: String) = apiService.login(email, password)
 

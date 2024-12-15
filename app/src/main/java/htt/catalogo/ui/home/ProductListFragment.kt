@@ -35,7 +35,7 @@ class ProductListFragment : Fragment() {
         adapter = ProductAdapter(emptyList(), emptyList(), { product ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    repository.addProductToCart("admin@gmail.com", product.id.toString())
+                    repository.addProductToCart(LoginInstance.currentUser?.email ?: "", product.id.toString())
                     val cartProducts = repository.getCartProducts()
                     withContext(Dispatchers.Main) {
                         adapter.updateProducts(adapter.products, cartProducts)

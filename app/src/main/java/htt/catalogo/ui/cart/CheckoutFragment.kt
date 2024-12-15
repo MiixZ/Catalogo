@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import htt.catalogo.R
 import htt.catalogo.adapters.ProductAdapter
 import htt.catalogo.api.ApiRepo
+import htt.catalogo.logininstance.LoginInstance
 import htt.catalogo.model.Product
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,7 @@ class CheckoutFragment : Fragment() {
         confirmPurchaseButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    repository.confirmBuy("admin@gmail.com")
+                    repository.confirmBuy(LoginInstance.currentUser?.email ?: "")
                     withContext(Dispatchers.Main) {
                         adapter.updateProducts(emptyList(), emptyList())
                         updateTotalPrice(emptyList())
