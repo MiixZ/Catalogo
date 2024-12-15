@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.nav_home, R.id.nav_gallery, R.id.map, R.id.nav_cart, R.id.add_product),
+            setOf(R.id.nav_home, R.id.map, R.id.nav_cart, R.id.add_product),
             drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> navController.navigate(R.id.nav_home)
-                R.id.nav_gallery -> navController.navigate(R.id.nav_gallery)
                 R.id.map -> navController.navigate(R.id.map)
                 R.id.nav_cart -> navController.navigate(R.id.nav_cart)
                 R.id.add_product -> navController.navigate(R.id.formProduct)

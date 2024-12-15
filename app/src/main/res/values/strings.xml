@@ -10,7 +10,6 @@
     <string name="action_logout">Logout</string>
 
     <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
     <string name="map">map</string>
     <string name="cart">cart</string>
     <string name="Producto">Agregar Producto</string>
