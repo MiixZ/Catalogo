@@ -41,12 +41,6 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
 
-        if (!(LoginInstance.currentUser?.role.equals("ADMIN"))) {
-            val menu = navView.menu
-            val addProductItem = menu.findItem(R.id.add_product)
-            // addProductItem.isVisible = false
-        }
-
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.nav_home, R.id.map, R.id.nav_cart, R.id.add_product),
@@ -141,6 +135,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateHeader()
+
+        val menu = binding.navView.menu
+        val addProductItem = menu.findItem(R.id.add_product)
+        addProductItem.isVisible = LoginInstance.currentUser?.role.equals("ADMIN")
     }
 
     private fun updateHeader() {
