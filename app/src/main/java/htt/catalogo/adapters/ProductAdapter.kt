@@ -88,6 +88,7 @@ class ProductAdapter(
                     addToCartIcon.visibility = View.VISIBLE
                     deleteFromCartIcon.visibility = View.GONE
                     if (LoginInstance.currentUser?.role == "ADMIN" && !onChart) trashProductIcon.visibility = View.VISIBLE
+                    else trashProductIcon.visibility = View.GONE
                     addToCartIcon.setOnClickListener { onAddToCartClick(product) }
                 }
             } else {
