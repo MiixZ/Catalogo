@@ -20,9 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import htt.catalogo.databinding.ActivityMainBinding
 import htt.catalogo.logininstance.LoginInstance
-import htt.catalogo.ui.form.FormActivity
 import htt.catalogo.ui.login.LoginActivity
-import htt.catalogo.ui.map.MapFragment
 
 class MainActivity : AppCompatActivity() {
 

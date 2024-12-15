@@ -77,4 +77,10 @@ class ProductListFragment : Fragment() {
 
         return view
     }
+
+    override fun onResume() {
+        super.onResume()
+
+
+    }
 }

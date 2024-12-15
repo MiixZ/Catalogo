@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import htt.catalogo.R
 import htt.catalogo.api.ApiRepo
+import htt.catalogo.logininstance.LoginInstance
 import htt.catalogo.model.Product
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +76,7 @@ class ProductAdapter(
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             productImage.setImageBitmap(bitmap)
 
-            if (showCartButtons) {
+            if (showCartButtons && LoginInstance.currentUser != null) {
                 if (isInCart) {
                     addToCartIcon.visibility = View.GONE
                     deleteFromCartIcon.visibility = View.VISIBLE
