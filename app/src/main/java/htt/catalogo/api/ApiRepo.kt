@@ -18,4 +18,6 @@ class ApiRepo {
     suspend fun addProduct(product: Product) = apiService.addProduct(product)
 
     suspend fun deleteProduct(id: String) = apiService.deleteProduct(id)
+
+    suspend fun confirmBuy(email: String) = apiService.confirmBuy(email)
 }

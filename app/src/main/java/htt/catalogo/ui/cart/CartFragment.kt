@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import htt.catalogo.R
@@ -24,7 +26,7 @@ class CartFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.activity_cart_main, container, false)
+        val view = inflater.inflate(R.layout.fragment_cart, container, false)
         val repository = ApiRepo()
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
@@ -65,6 +67,11 @@ class CartFragment: Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+
+        val checkoutButton: Button = view.findViewById(R.id.checkout_button)
+        checkoutButton.setOnClickListener {
+            findNavController().navigate(R.id.checkoutFragment)
         }
 
         return view

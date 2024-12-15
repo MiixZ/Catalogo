@@ -43,14 +43,11 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
 
-
-        if(!(LoginInstance.currentUser?.role.equals("ADMIN"))){
+        if (!(LoginInstance.currentUser?.role.equals("ADMIN"))) {
             val menu = navView.menu
             val addProductItem = menu.findItem(R.id.add_product)
-            addProductItem.isVisible = false
+            // addProductItem.isVisible = false
         }
-
-
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
@@ -66,10 +63,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_gallery -> navController.navigate(R.id.nav_gallery)
                 R.id.map -> navController.navigate(R.id.map)
                 R.id.nav_cart -> navController.navigate(R.id.nav_cart)
-                R.id.add_product -> {
-                    val intent = Intent(this, FormActivity::class.java)
-                    startActivity(intent)
-                }
+                R.id.add_product -> navController.navigate(R.id.formProduct)
             }
             drawerLayout.closeDrawers()
             true

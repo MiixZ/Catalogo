@@ -29,4 +29,7 @@ interface ApiService {
 
     @DELETE("product/deleteProduct")
     suspend fun deleteProduct(@Query("id") id: String)
+
+    @GET("cart/confirmBuy")
+    suspend fun confirmBuy(@Query("email") email: String)
 }

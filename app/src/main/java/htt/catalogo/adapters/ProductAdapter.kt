@@ -20,7 +20,8 @@ class ProductAdapter(
     private var cartProducts: List<Product>,
     private val onAddToCartClick: (Product) -> Unit,
     private val onDeleteFromCartClick: (Product) -> Unit,
-    private val showTotal: Boolean = true
+    private val showTotal: Boolean = true,
+    private val showCartButtons: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -74,14 +75,20 @@ class ProductAdapter(
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             productImage.setImageBitmap(bitmap)
 
-            if (isInCart) {
-                addToCartIcon.visibility = View.GONE
-                deleteFromCartIcon.visibility = View.VISIBLE
-                deleteFromCartIcon.setOnClickListener { onDeleteFromCartClick(product) }
+            if (showCartButtons) {
+                if (isInCart) {
+                    addToCartIcon.visibility = View.GONE
+                    deleteFromCartIcon.visibility = View.VISIBLE
+                    deleteFromCartIcon.setOnClickListener { onDeleteFromCartClick(product) }
+                } else {
+                    addToCartIcon.visibility = View.VISIBLE
+                    deleteFromCartIcon.visibility = View.GONE
+                    addToCartIcon.setOnClickListener { onAddToCartClick(product) }
+                }
             } else {
-                addToCartIcon.visibility = View.VISIBLE
+                addToCartIcon.visibility = View.GONE
                 deleteFromCartIcon.visibility = View.GONE
-                addToCartIcon.setOnClickListener { onAddToCartClick(product) }
+                trashProductIcon.visibility = View.GONE
             }
 
             trashProductIcon.setOnClickListener {
