@@ -14,9 +14,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import htt.catalogo.MainActivity
 import htt.catalogo.R
 import htt.catalogo.api.ApiRepo
 import htt.catalogo.model.Product
+import htt.catalogo.ui.home.ProductListActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,6 +93,8 @@ class FormFragment : Fragment() {
                 repository.addProduct(product)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Product added successfully", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    startActivity(intent)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
