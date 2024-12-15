@@ -2,8 +2,8 @@ package htt.catalogo.api
 
 import htt.catalogo.model.Product
 import htt.catalogo.model.User
-import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -26,4 +26,7 @@ interface ApiService {
 
     @POST("product/createProduct")
     suspend fun addProduct(@Body product: Product): Product
+
+    @DELETE("product/deleteProduct")
+    suspend fun deleteProduct(@Query("id") id: String)
 }

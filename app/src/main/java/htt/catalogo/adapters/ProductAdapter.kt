@@ -8,7 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import htt.catalogo.R
+import htt.catalogo.api.ApiRepo
 import htt.catalogo.model.Product
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductAdapter(
     var products: List<Product>,
@@ -60,6 +65,7 @@ class ProductAdapter(
         private val productImage: ImageView = itemView.findViewById(R.id.product_image)
         private val addToCartIcon: ImageView = itemView.findViewById(R.id.product_icon)
         private val deleteFromCartIcon: ImageView = itemView.findViewById(R.id.delete_product_icon)
+        private val trashProductIcon: ImageView = itemView.findViewById(R.id.trash_product)
 
         fun bind(product: Product, isInCart: Boolean) {
             productName.text = product.name
@@ -76,6 +82,21 @@ class ProductAdapter(
                 addToCartIcon.visibility = View.VISIBLE
                 deleteFromCartIcon.visibility = View.GONE
                 addToCartIcon.setOnClickListener { onAddToCartClick(product) }
+            }
+
+            trashProductIcon.setOnClickListener {
+                val repository = ApiRepo()
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        repository.deleteProduct(product.id.toString())
+                        withContext(Dispatchers.Main) {
+                            products = products.filter { it.id != product.id }
+                            notifyDataSetChanged()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
     }

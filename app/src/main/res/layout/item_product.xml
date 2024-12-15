@@ -54,7 +54,8 @@
             android:src="@drawable/add_to_chart"
             android:contentDescription="Ícono de carrito"
             app:tint="@color/black"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="45dp"  />
 
         <ImageView
             android:id="@+id/delete_product_icon"
@@ -62,6 +63,16 @@
             android:layout_height="32dp"
             android:src="@drawable/delete"
             android:contentDescription="Ícono de eliminar"
+            app:tint="@color/black"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="45dp" />
+
+        <ImageView
+            android:id="@+id/trash_product"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/papelera"
+            android:contentDescription="Ícono de eliminar producto"
             app:tint="@color/black"
             android:layout_gravity="center_vertical" />
     </LinearLayout>

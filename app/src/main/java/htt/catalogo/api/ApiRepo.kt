@@ -16,4 +16,6 @@ class ApiRepo {
     suspend fun login(email: String, password: String) = apiService.login(email, password)
 
     suspend fun addProduct(product: Product) = apiService.addProduct(product)
+
+    suspend fun deleteProduct(id: String) = apiService.deleteProduct(id)
 }
