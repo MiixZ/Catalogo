@@ -22,6 +22,7 @@ import htt.catalogo.databinding.ActivityMainBinding
 import htt.catalogo.logininstance.LoginInstance
 import htt.catalogo.ui.form.FormActivity
 import htt.catalogo.ui.login.LoginActivity
+import htt.catalogo.ui.map.MapFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,6 +42,15 @@ class MainActivity : AppCompatActivity() {
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
+
+
+        if(!(LoginInstance.currentUser?.role.equals("ADMIN"))){
+            val menu = navView.menu
+            val addProductItem = menu.findItem(R.id.add_product)
+            addProductItem.isVisible = false
+        }
+
+
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
