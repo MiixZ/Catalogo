@@ -15,7 +15,7 @@ Esta aplicación es un sistema de carrito de compras con funcionalidades de nave
    - Utilizar **Android Studio** (versión recomendada: 2022.2.1 o superior).
 
 3. **Configurar las Dependencias**
-   - Habrá que asegurarse de tener configurado el archivo `build.gradle` con las dependencias necesarias (mencionadas abajo).
+   - Habrá que asegurarse de tener configurado el archivo `build.gradle` con las dependencias necesarias (mencionadas abajo) e instalarlas (se puede hacer mediante el acceso directo de gradle que tiene Android Studio en su panel derecho.
 
 4. **Ejecutar la Aplicación**
    - Conecta un dispositivo físico o utiliza un emulador.
@@ -101,9 +101,13 @@ app/
 
 La aplicación utiliza los siguientes endpoints a través de **Retrofit**:
 
-| Método | Endpoint                 | Descripción                                          |
-|---------|--------------------------|------------------------------------------------------|
-| GET     | `/api/products`          | Obtiene la lista de productos.                      |
-| POST    | `/api/cart/add`          | Añade un producto al carrito.                       |
-| DELETE  | `/api/cart/remove/{id}`  | Elimina un producto del carrito.                     |
-| POST    | `/api/checkout`          | Realiza el checkout y procesa el pedido.             |
+| Método  | Endpoint                         | Descripción                                           |
+|---------|----------------------------------|-------------------------------------------------------|
+| GET     | `/api/product/getAllProducts`    | Obtiene la lista de productos.                       |
+| GET     | `/api/cart/addProductToCart?email=<email>&productId=<id>` | Añade un producto al carrito de un usuario.           |
+| GET     | `/api/cart/getCartProducts?email=<email>` | Obtiene la lista de productos en el carrito de un usuario. |
+| GET     | `/api/cart/removeProductFromCart?email=<email>&productId=<id>` | Elimina un producto del carrito de un usuario.        |
+| POST     | `/api/user/login?email=<email>&password=<password>` | Inicia sesión y devuelve la información del usuario. |
+| POST    | `/api/product/createProduct`     | Crea un nuevo producto en el sistema.                |
+| DELETE  | `/api/product/deleteProduct?id=<id>` | Elimina un producto por su identificador.           |
+| GET     | `/api/cart/confirmBuy?email=<email>` | Confirma la compra y procesa el pedido del carrito.  |
