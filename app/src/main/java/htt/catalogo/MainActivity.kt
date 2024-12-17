@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity() {
     // --- Activity Lifecycle ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        LoginInstance.loadUser(this)
+
         checkLocationPermission()
         setupUI()
     }
@@ -158,7 +161,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun performLogout() {
-        LoginInstance.currentUser = null
+        LoginInstance.logout(this)
         updateHeader()
         invalidateOptionsMenu()
         recreate()

@@ -57,8 +57,7 @@ class LoginFragment : Fragment() {
                     if (result.email.isNotEmpty()) {
                         Toast.makeText(requireContext(), "Login exitoso", Toast.LENGTH_SHORT).show()
                         LoginInstance.currentUser = result
-                        //findNavController().navigate(R.id.home_fragment_container)
-
+                        LoginInstance.saveUser(requireContext(), result)
                         requireActivity().finish()
                     } else {
                         Toast.makeText(requireContext(), "Mail o contraseña erronea", Toast.LENGTH_LONG).show()
