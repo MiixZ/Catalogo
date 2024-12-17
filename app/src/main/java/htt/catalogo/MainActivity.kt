@@ -26,51 +26,62 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val LOCATION_PERMISSION_REQUEST = 100
 
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST = 100
+    }
+
+    // --- Activity Lifecycle ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         checkLocationPermission()
+        setupUI()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        updateHeader()
+        toggleAdminMenuItem()
+    }
+
+    // --- UI Setup ---
+    private fun setupUI() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        setupNavigation()
+        setupFabButtons()
+        updateHeader()
+    }
+
+    private fun setupNavigation() {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.nav_home, R.id.map, R.id.nav_cart, R.id.add_product),
             drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_home -> navController.navigate(R.id.nav_home)
-                R.id.map -> navController.navigate(R.id.map)
-                R.id.nav_cart -> navController.navigate(R.id.nav_cart)
-                R.id.add_product -> navController.navigate(R.id.formProduct)
-            }
+            handleNavigationSelection(menuItem.itemId, navController)
             drawerLayout.closeDrawers()
             true
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.nav_cart) {
-                binding.appBarMain.fab.hide()
-                binding.appBarMain.fabHome.show()
-            } else {
-                binding.appBarMain.fab.show()
-                binding.appBarMain.fabHome.hide()
-            }
+            toggleFabVisibility(destination.id)
         }
+    }
 
-        updateHeader()
+    // --- Floating Action Buttons (FABs) ---
+    private fun setupFabButtons() {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
 
         binding.appBarMain.fab.setOnClickListener {
             navController.navigate(R.id.nav_cart)
@@ -80,16 +91,80 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun toggleFabVisibility(destinationId: Int) {
+        if (destinationId == R.id.nav_cart) {
+            binding.appBarMain.fab.hide()
+            binding.appBarMain.fabHome.show()
+        } else {
+            binding.appBarMain.fab.show()
+            binding.appBarMain.fabHome.hide()
+        }
+    }
+
+    // --- Navigation Actions ---
+    private fun handleNavigationSelection(itemId: Int, navController: androidx.navigation.NavController) {
+        when (itemId) {
+            R.id.nav_home -> navController.navigate(R.id.nav_home)
+            R.id.map -> navController.navigate(R.id.map)
+            R.id.nav_cart -> navController.navigate(R.id.nav_cart)
+            R.id.add_product -> navController.navigate(R.id.formProduct)
+        }
+    }
+
+    // --- Header Updates ---
+    private fun updateHeader() {
+        val headerView = binding.navView.getHeaderView(0)
+        headerView.findViewById<TextView>(R.id.name).text =
+            LoginInstance.currentUser?.name ?: "Usuario no disponible"
+        headerView.findViewById<TextView>(R.id.mail).text =
+            LoginInstance.currentUser?.email ?: "Email no disponible"
+    }
+
+    private fun toggleAdminMenuItem() {
+        val isAdmin = LoginInstance.currentUser?.role == "ADMIN"
+        val menu = binding.navView.menu
+        menu.findItem(R.id.add_product).isVisible = isAdmin
+    }
+
+    // --- Options Menu Setup ---
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val loginItem = menu.findItem(R.id.action_login)
+        val logoutItem = menu.findItem(R.id.action_logout)
+
+        val isLoggedIn = LoginInstance.currentUser != null
+        loginItem.isVisible = !isLoggedIn
+        logoutItem.isVisible = isLoggedIn
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_login -> {
+                startActivity(Intent(this, LoginActivity::class.java))
+                true
+            }
+            R.id.action_logout -> {
+                performLogout()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun performLogout() {
+        LoginInstance.currentUser = null
+        updateHeader()
+        invalidateOptionsMenu()
+        recreate()
+    }
+
+    // --- Location Permissions ---
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
@@ -105,64 +180,18 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permiso de ubicación concedido", Toast.LENGTH_SHORT).show()
+            val message = if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                "Permiso de ubicación concedido"
             } else {
-                Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+                "Permiso de ubicación denegado"
             }
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_login -> {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                return true
-            }
-            R.id.action_logout -> {
-                LoginInstance.currentUser = null
-                updateHeader()
-                invalidateOptionsMenu()
-                recreate()
-
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateHeader()
-
-        val menu = binding.navView.menu
-        val addProductItem = menu.findItem(R.id.add_product)
-        addProductItem.isVisible = LoginInstance.currentUser?.role.equals("ADMIN")
-    }
-
-    private fun updateHeader() {
-        val headerView = binding.navView.getHeaderView(0)
-        val name: TextView = headerView.findViewById(R.id.name)
-        val mail: TextView = headerView.findViewById(R.id.mail)
-
-        name.text = LoginInstance.currentUser?.name ?: "Usuario no disponible"
-        mail.text = LoginInstance.currentUser?.email ?: "Email no disponible"
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        super.onPrepareOptionsMenu(menu)
-
-        val loginItem = menu.findItem(R.id.action_login)
-        val logoutItem = menu.findItem(R.id.action_logout)
-
-        if (LoginInstance.currentUser == null) {
-            loginItem.isVisible = true
-            logoutItem.isVisible = false
-        } else {
-            loginItem.isVisible = false
-            logoutItem.isVisible = true
-        }
-        return true
+    // --- Back Navigation ---
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

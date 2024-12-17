@@ -11,10 +11,7 @@ import htt.catalogo.R
 import htt.catalogo.api.ApiRepo
 import htt.catalogo.logininstance.LoginInstance
 import htt.catalogo.model.Product
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ProductAdapter(
     var products: List<Product>,
@@ -22,8 +19,8 @@ class ProductAdapter(
     private val onAddToCartClick: (Product) -> Unit,
     private val onDeleteFromCartClick: (Product) -> Unit,
     private val showTotal: Boolean = true,
-    public var showCartButtons: Boolean = true,
-    public var onChart: Boolean = false
+    var showCartButtons: Boolean = true,
+    var onChart: Boolean = false
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -36,25 +33,23 @@ class ProductAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_PRODUCT) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
-            ProductViewHolder(view)
-        } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_total, parent, false)
-            TotalViewHolder(view)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view = when (viewType) {
+            VIEW_TYPE_PRODUCT -> layoutInflater.inflate(R.layout.item_product, parent, false)
+            else -> layoutInflater.inflate(R.layout.item_total, parent, false)
         }
+        return if (viewType == VIEW_TYPE_PRODUCT) ProductViewHolder(view) else TotalViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ProductViewHolder) {
-            val product = products[position]
-            holder.bind(product, cartProducts.contains(product))
+            holder.bind(products[position], cartProducts.contains(products[position]))
         } else if (holder is TotalViewHolder) {
             holder.bind(cartProducts.sumOf { it.price })
         }
     }
 
-    override fun getItemCount(): Int = if (showTotal) products.size + 1 else products.size
+    override fun getItemCount(): Int = products.size + if (showTotal) 1 else 0
 
     fun updateProducts(newProducts: List<Product>, newCartProducts: List<Product>) {
         products = newProducts
@@ -72,43 +67,44 @@ class ProductAdapter(
 
         fun bind(product: Product, isInCart: Boolean) {
             productName.text = product.name
-            productPrice.text = product.price.toString()
-            val imageBytes = product.getImageBytes()
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-            productImage.setImageBitmap(bitmap)
+            productPrice.text = "$${product.price}"
+            productImage.setImageBitmap(getProductBitmap(product))
+
+            configureCartButtons(product, isInCart)
+        }
+
+        private fun getProductBitmap(product: Product) = BitmapFactory.decodeByteArray(
+            product.getImageBytes(), 0, product.getImageBytes().size
+        )
+
+        private fun configureCartButtons(product: Product, isInCart: Boolean) {
+            val isAdmin = LoginInstance.currentUser?.role == "ADMIN" && !onChart
 
             if (showCartButtons && LoginInstance.currentUser != null) {
-                if (isInCart) {
-                    addToCartIcon.visibility = View.GONE
-                    deleteFromCartIcon.visibility = View.VISIBLE
-                    if (LoginInstance.currentUser?.role == "ADMIN" && !onChart) trashProductIcon.visibility = View.VISIBLE
-                    else trashProductIcon.visibility = View.GONE
-                    deleteFromCartIcon.setOnClickListener { onDeleteFromCartClick(product) }
-                } else {
-                    addToCartIcon.visibility = View.VISIBLE
-                    deleteFromCartIcon.visibility = View.GONE
-                    if (LoginInstance.currentUser?.role == "ADMIN" && !onChart) trashProductIcon.visibility = View.VISIBLE
-                    else trashProductIcon.visibility = View.GONE
-                    addToCartIcon.setOnClickListener { onAddToCartClick(product) }
-                }
+                addToCartIcon.visibility = if (isInCart) View.GONE else View.VISIBLE
+                deleteFromCartIcon.visibility = if (isInCart) View.VISIBLE else View.GONE
+                trashProductIcon.visibility = if (isAdmin) View.VISIBLE else View.GONE
+
+                addToCartIcon.setOnClickListener { onAddToCartClick(product) }
+                deleteFromCartIcon.setOnClickListener { onDeleteFromCartClick(product) }
+                trashProductIcon.setOnClickListener { deleteProduct(product) }
             } else {
                 addToCartIcon.visibility = View.GONE
                 deleteFromCartIcon.visibility = View.GONE
                 trashProductIcon.visibility = View.GONE
             }
+        }
 
-            trashProductIcon.setOnClickListener {
-                val repository = ApiRepo()
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        repository.deleteProduct(product.id.toString())
-                        withContext(Dispatchers.Main) {
-                            products = products.filter { it.id != product.id }
-                            notifyDataSetChanged()
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+        private fun deleteProduct(product: Product) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    ApiRepo().deleteProduct(product.id.toString())
+                    withContext(Dispatchers.Main) {
+                        products = products.filter { it.id != product.id }
+                        notifyDataSetChanged()
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
